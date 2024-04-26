@@ -87,4 +87,5 @@ I've included a interactive map that visualizes the results of a query and hiera
 
 ## References
 
-- S. Brakatsoulas, D. Pfoser, and Y. Theodoridis. "Revisiting R-Tree Construction Principles", Advances in Databases and Information Systems 2435 (2002)
+- Brakatsoulas, S., Pfoser, D., & Theodoridis, Y. (2002). Revisiting R-tree construction principles. Computer Technology Institute.
+- Guttman, A. (1984). R-trees: A dynamic index structure for spatial searching. University of California, Berkeley, Computer Science Division.
