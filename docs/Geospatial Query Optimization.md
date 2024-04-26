@@ -17,7 +17,7 @@ The main challenges include:
 
 ### Basic Algorithm
 
-Initially, I considered a simple **linear search** through an unsorted list of points within the dataset. This method is easy and straightforward but inefficient for large datasets.
+Initially, I considered a simple linear search through an unsorted list of points within the dataset. This method is easy and straightforward but inefficient for large datasets.
 
 ### R-tree Index Algorithm
 
@@ -64,7 +64,7 @@ _Note that this implementation only works for 2D data. It also only supports ins
 - **Process**: The insertion process involves finding the appropriate leaf node and updating or splitting the node if necessary.
 - **Complexity**:
 
-  - **Best Case**: The point to be inserted falls into a node that has available capacity, thereby avoiding a split. This involves traversing from the root to the appropriate leaf node, which takes logarithmic time relative to the number of elements (n) in the tree (O(log⁡ n)).
+  - **Best Case**: The point to be inserted falls into a node that has available capacity (< `max_childen`), thereby avoiding a split. If the point inserted is a leaf (the first point inserted into the tree) the time complexity is O(1). However, for all consecutive insertion this involves traversing from the root to the appropriate leaf node, which takes logarithmic time relative to the number of elements (n) in the tree (O(log⁡ n)). If the
   - **Average Case**: Similar to the best case but includes occasional splits as nodes reach maximum capacity. While insertion generally requires traversing down to a leaf node and possibly updating bounds upwards, the average complexity remains logarithmic. Most insertions are straightforward, but occasional node splits involve more computational overhead, primarily sorting and selecting the best split. Still, these operations are constrained by the maximum number of children per node, which is 10 in my implementation.
 
   - **Worst Case**: The inserted point requires a split at every level of the tree, affecting the tree structure significantly. This brings the time complexity closer to O(n) because each level of the tree must be traversed and potentially split. This is unlikely if the split logic keeps the tree balanced.
