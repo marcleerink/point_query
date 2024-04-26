@@ -17,7 +17,7 @@ The main challenges include:
 
 ### Basic Algorithm
 
-Initially, one might consider a simple **linear search** through an unsorted list of points within the dataset. While straightforward, this method is inefficient for large datasets.
+Initially, I considered a simple **linear search** through an unsorted list of points within the dataset. This method is easy and straightforward but inefficient for large datasets.
 
 ### R-tree Index Algorithm
 
@@ -47,6 +47,13 @@ Every point n in the dataset must be checked individually against the query boun
 ### R-tree Indexing Algorithm
 
 Procedure: Utilize the hierarchical structure of R-trees to avoid unnecessary checks by excluding entire groups of points that do not intersect with the bounding box.
+This implementation of the R-tree includes the following key components:
+
+- **Node**: Represents a node in the R-tree, containing a list of points, children nodes, and a bounding box.
+- **Splitting logic**: based on the R\*-tree algorithm. This splitting logic evaluates the best split based on the overlap and area of the resulting nodes for each axis. This results in a more balanced tree and better query performance(S. Brakatsoulas)
+- **RTree**: The main class that manages the tree structure and provides methods for inserting points and querying points within a bounding box.
+
+_Note that this implementation only works for 2D data. It also only supports inserting points and querying points within a bounding box_
 
 **Python Code Example**: [r_tree.py](../src/r_tree.py)
 
@@ -56,9 +63,13 @@ Procedure: Utilize the hierarchical structure of R-trees to avoid unnecessary ch
 
 - **Process**: The insertion process involves finding the appropriate leaf node and updating or splitting the node if necessary.
 - **Complexity**:
-  - **Best Case**: If the tree is shallow (which isn't typical unless there's little data), the insertion is O(1) because it directly inserts into the root or a close child.
-  - **Average Case**: Assuming a reasonably balanced tree, the complexity of finding the right node to insert into, given by the height of the tree, is O(log⁡ n). However, this is under the assumption that the tree remains balanced without explicit rebalancing logic, which may not always be the case.
-  - **Worst Case**: In a poorly balanced tree, particularly where nodes have skewed distributions that cause unbalanced splits, the complexity could degrade to O(n). This situation could arise if splits consistently occur in a way that one side always receives more entries than the other.
+
+  - **Best Case**: The point to be inserted falls into a node that has available capacity, thereby avoiding a split. This involves traversing from the root to the appropriate leaf node, which takes logarithmic time relative to the number of elements (n) in the tree (O(log⁡ n)).
+  - **Average Case**: Similar to the best case but includes occasional splits as nodes reach maximum capacity. While insertion generally requires traversing down to a leaf node and possibly updating bounds upwards, the average complexity remains logarithmic. Most insertions are straightforward, but occasional node splits involve more computational overhead, primarily sorting and selecting the best split. Still, these operations are constrained by the maximum number of children per node, which is 10 in my implementation.
+
+  - **Worst Case**: The inserted point requires a split at every level of the tree, affecting the tree structure significantly. This brings the time complexity closer to O(n) because each level of the tree must be traversed and potentially split. This is unlikely if the split logic keeps the tree balanced.
+
+  The `max_children` has a impact on the complexity of the insertion operation. The higher the `max_children`, the more children a node can have before it is split, which can reduce the number of splits required during insertion. However, a higher `max_children` can also lead to more overlap between nodes, which can increase the complexity of the query operation.
 
 **Query (`query` method)**
 
@@ -71,10 +82,8 @@ Procedure: Utilize the hierarchical structure of R-trees to avoid unnecessary ch
 ## Plotting and Visualizing the Results
 
 I've included a interactive map that visualizes the results of a query and hierarchical bounding box structure of the R-tree in a real-world scenario. The map is generated using the `folium` library.
-[map](plots/rtree_map_optimized.html)
+[See the map here](plots/rtree_map_optimized.html)
 
 ## References
 
 - S. Brakatsoulas, D. Pfoser, and Y. Theodoridis. "Revisiting R-Tree Construction Principles", Advances in Databases and Information Systems 2435 (2002)
-
-- Leutenegger, Scott T.; Edgington, Jeffrey M.; Lopez, Mario A. (February 1997). “STR: A Simple and Efficient Algorithm for R-Tree Packing”. https://ia600900.us.archive.org/27/items/nasa_techdoc_19970016975/19970016975.pdf

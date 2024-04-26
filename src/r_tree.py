@@ -3,31 +3,37 @@ MAX_CHILDREN = 10
 
 class Node:
     def __init__(self, bounds, max_children=MAX_CHILDREN):
+        """Initialize a node with bounds and max children.
+
+        Args:
+            bounds (tuple): The bounds of the node in the form (min_x, min_y, max_x, max_y).
+            max_children (int): The maximum number of children a node can have before splitting.
+
+        Attributes:
+            children (list): List of points or child nodes.
+            is_leaf (bool): Whether the node is a leaf or not.
+
+        """
         self.bounds = bounds  # bounds are (min_x, min_y, max_x, max_y)
         self.children = []  # List of points or child nodes
         self.is_leaf = True
         self.max_children = max_children
 
     def insert(self, point):
-        # Update bounds when a new point is inserted
         self.update_bounds(point)
         if self.is_leaf:
             self.children.append(point)
             if len(self.children) > self.max_children:
                 self.split()
         else:
-            # Insert into child with the least enlargement required
             self.choose_subtree(point).insert(point)
 
     def split(self):
-        # Perform the split on both x and y dimensions and choose the best one
         best_splits = []
         dimensions = [0, 1]
 
         for dim in dimensions:
-            # Sort the children by their dimension value
             self.children.sort(key=lambda child: child[dim])
-            # Try splitting at every possible position
             for i in range(1, len(self.children)):
                 left = self.children[:i]
                 right = self.children[i:]
@@ -37,13 +43,11 @@ class Node:
                 area = self.calculate_area(bounds1) + self.calculate_area(bounds2)
                 best_splits.append((overlap, area, i, dim))
 
-        # Choose the split with the least overlap, then the least area
         _, _, split_index, split_dim = min(best_splits)
         self.children.sort(key=lambda child: child[split_dim])
         left = self.children[:split_index]
         right = self.children[split_index:]
 
-        # Update the current node with the new children
         self.children = [
             Node(self.calculate_bounds(left), max_children=self.max_children)
         ]
@@ -143,7 +147,7 @@ class RTree:
             )
         else:
             self.root.insert(point)
-            if len(self.root.children) > self.max_children:  # Check if root was split
+            if len(self.root.children) > self.max_children:
                 new_root = Node(
                     self.root.calculate_bounds(self.root.children),
                     max_children=self.max_children,
