@@ -167,7 +167,7 @@ class RTree:
             return [node]
         else:
             return [node] + [
-                child for child in node.children for node in self._all_nodes(child)
+                child for child in node.children for _ in self._all_nodes(child)
             ]
 
     def all_nodes(self):
