@@ -77,6 +77,19 @@ _Note that this implementation only works for 2D data. It also only supports ins
 
 ---
 
+## R-tree Hierarchical Structure
+
+![R-tree](plots/rtree_hierarchy.png)
+
+---
+
+## Concrete Example
+
+I've included a interactive map that visualizes the results of a query and hierarchical bounding box structure of the R-tree in a real-world scenario. The map is generated using the `folium` library.
+[See the map here](plots/rtree_map_optimized.html)
+
+---
+
 **Time Complexity Analysis:**
 
 **Insertion (`insert` method)**
@@ -112,13 +125,6 @@ The `max_children` has a impact on the complexity of the insertion operation. Th
 ---
 
 - **Worst Case**: If the query intersects with many or all bounding boxes (e.g., a very large query box in a densely populated tree), or if the tree is poorly balanced with lots of overlap, the complexity could go up to O(n). This would occur if nearly every node needs to be checked.
-
----
-
-## Plotting and Visualizing the Results
-
-I've included a interactive map that visualizes the results of a query and hierarchical bounding box structure of the R-tree in a real-world scenario. The map is generated using the `folium` library.
-[See the map here](plots/rtree_map_optimized.html)
 
 ---
 

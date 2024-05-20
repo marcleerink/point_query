@@ -85,7 +85,9 @@ _Note that this implementation only works for 2D data. It also only supports ins
 I've included a interactive map that visualizes the results of a query and hierarchical bounding box structure of the R-tree in a real-world scenario. The map is generated using the `folium` library.
 [See the map here](plots/rtree_map.html)
 
-To further demonstrate the structure of the r-tree I've included a [diagram](plots/r-tree diagram.pdf)
+### R-tree Hierarchical Structure
+
+![R-tree](plots/rtree_hierarchy.png)
 
 ## References
 

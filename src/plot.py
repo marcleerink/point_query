@@ -19,7 +19,7 @@ def generate_random_small_rectangles(n: int, size: float = 0.1) -> dict[str, Rec
 
 
 # Generate random small rectangles
-rectangles = generate_random_small_rectangles(50, size=1.0)
+rectangles = generate_random_small_rectangles(500, size=0.3)
 
 # Create R-tree and insert points
 t = RTree()
@@ -46,7 +46,7 @@ bounding_boxes_by_level = get_bounding_boxes_by_level(t)
 total_nodes = sum(len(level) for level in t.get_levels())
 total_entries = sum(len(node.entries) for node in t.get_nodes() if node.is_leaf)
 
-# Define colors for each level
+# Define colors for visited nodes
 colors = [
     "blue",
     "green",
@@ -55,7 +55,6 @@ colors = [
     "darkred",
     "lightred",
     "darkblue",
-    "lightblue",
     "darkgreen",
     "lightgreen",
     "cadetblue",
@@ -66,12 +65,7 @@ colors = [
 
 # Simulate a query and note the bounding boxes it has to visit
 query_bbox = Rect(-10, 35, 30, 60)
-visited_nodes_by_level = []
-for level_idx, node in enumerate(t.query_nodes(query_bbox, leaves=False)):
-    if len(visited_nodes_by_level) <= level_idx:
-        visited_nodes_by_level.append([])
-    visited_nodes_by_level[level_idx].append(node)
-
+visited_nodes = list(t.query_nodes(query_bbox, leaves=False))
 found_entries = list(t.query(query_bbox))
 
 # Create a Folium map centered at a midpoint
@@ -91,7 +85,6 @@ for node in t.get_nodes():
                 fill=False,
             ).add_to(total_entries_layer)
 total_entries_layer.add_to(m)
-
 
 # Add bounding boxes to the map grouped by levels
 for level_idx, bounding_boxes in enumerate(bounding_boxes_by_level):
@@ -115,19 +108,16 @@ folium.Rectangle(
 ).add_to(query_layer)
 query_layer.add_to(m)
 
-# Add visited nodes layer, changing color based on the level
-for level_idx, nodes in enumerate(visited_nodes_by_level):
-    visited_layer = folium.FeatureGroup(
-        name=f"Visited Nodes Level {level_idx + 1} ({len(nodes)} nodes)", show=False
-    )
-    color = colors[level_idx % len(colors)]
-    for node in nodes:
-        bbox = node.get_bounding_rect()
-        folium.Rectangle(
-            bounds=[[bbox.min_x, bbox.min_y], [bbox.max_x, bbox.max_y]],
-            color=color,
-            fill=False,
-        ).add_to(visited_layer)
+# Add visited nodes layer, separating them by order of visit
+for idx, node in enumerate(visited_nodes):
+    visited_layer = folium.FeatureGroup(name=f"Visited Node {idx + 1}", show=False)
+    color = colors[idx % len(colors)]
+    bbox = node.get_bounding_rect()
+    folium.Rectangle(
+        bounds=[[bbox.min_x, bbox.min_y], [bbox.max_x, bbox.max_y]],
+        color=color,
+        fill=False,
+    ).add_to(visited_layer)
     visited_layer.add_to(m)
 
 # Add found rectangles layer
